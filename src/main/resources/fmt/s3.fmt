@@ -1,0 +1,20 @@
+
+
+<#macro field fieldList>
+<#list fieldList as field>
+	private ${field.fieldJavaType} ${field.fieldName}; // ${field.fieldComment!}
+</#list>
+</#macro>
+
+<#macro setget fieldList>
+<#list fieldList as field><#assign fieldUpFirst=field.fieldName?cap_first/>
+	public ${field.fieldJavaType} get${fieldUpFirst}() {
+		return ${field.fieldName};
+	}
+	
+	public void set${fieldUpFirst}(${field.fieldJavaType} ${field.fieldName}) {
+		this.${field.fieldName} = ${field.fieldName};
+	}
+	
+</#list>
+</#macro>
