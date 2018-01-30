@@ -1,0 +1,7 @@
+<#list tableList as table>
+<#list table?keys as itemKey>
+${itemKey}
+</#list>
+<#assign tableDbName=table["tableDbName"]/>
+	${tableDbName!},${tableComment!}
+</#list>

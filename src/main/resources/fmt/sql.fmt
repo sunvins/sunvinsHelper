@@ -1,0 +1,26 @@
+<#macro cat strValue pre="" after=""><#if strValue!="">${pre}${strValue}${after}</#if></#macro>
+<#assign nullMap={"N":"NOT NULL"}/>
+<#assign indexMap={"主键":"PRIMARY KEY AUTO_INCREMENT"}/>
+<#list tableList as table>
+DROP TABLE ${table.tableDbName};
+</#list>
+<#assign ife = "com.sunvins.fmt.IfEMethod"?new() />  
+<#list tableList as table>
+CREATE TABLE ${table.tableDbName} (
+<#list table.fieldList as field>
+	<#compress>
+	${field.fieldDbName+' '+field.fieldDbType} <#rt>
+	<@cat field.fieldLength "(" "${ife(field.scale!,','+field.scale!)})" /> <#t>
+	 ${indexMap[field.fieldIndex]!} <#t>
+	${nullMap[field.fieldNullable]!} <#t>
+	COMMENT '${field.fieldComment!}'<#t>
+	<#if field_has_next>,</#if><#lt></#compress>
+</#list>
+) COMMENT='${table.tableComment}' DEFAULT CHARSET=utf8;
+<#-- 创建索引 -->
+<#list table.fieldList as field>
+<#if field.fieldIndex='索引'>
+CREATE INDEX idx_${table.tableDbName}_${field.fieldDbName} ON ${table.tableDbName} (${field.fieldDbName});
+</#if>
+</#list>
+</#list>

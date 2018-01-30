@@ -1,0 +1,52 @@
+<#macro R1 str>${r'${'}${str}}</#macro>
+<#macro R2 str>${r'#{'}${str}}</#macro>
+<?xml version="1.0" encoding="UTF-8"?>    
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunvins.dao.${voName}Dao">
+	<resultMap id="${voName}" type="com.sunvins.model.${voName}VO">
+		<#list fieldList as field>
+		<result column="${field.fieldDbName}" property="${field.fieldName}" jdbcType="${field.fieldJdbcType}" />
+		</#list>
+	</resultMap>
+	
+	<!-- 查询单条记录 -->
+	<select id="getByCid" parameterType="int" resultMap="${voName}">
+		select * from ${tableDbName} where cid = <@R2 'cid'/>
+	</select>
+
+	<!-- 查询记录列表 -->
+	<select id="getSearchList" parameterType="com.sunvins.bean.SearchBean"  resultMap="${voName}">
+		select * from ${tableDbName} 
+		<where>
+			<if test="criteria1!=null">
+				and user_name=<@R2 'criteria1'/>
+			</if>
+		</where>
+	</select>
+	
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.sunvins.model.${voName}VO">
+		<selectKey keyProperty="cid" resultType="int">  
+            select LAST_INSERT_ID()
+        </selectKey>
+		insert into ${tableDbName} (<#list fieldList as field>${field.fieldDbName}<#if field_has_next>,</#if></#list>) 
+		values (<#list fieldList as field>
+		<@R2 '${field.fieldName},jdbcType=${field.fieldJdbcType}'/><#if field_has_next>,</#if></#list>)
+	</insert>
+
+	<!-- 更新记录 -->
+	<update id="update" parameterType="com.sunvins.model.${voName}VO">
+		update ${tableDbName} set 
+		<#list fieldList as field>
+		${field.fieldDbName} = <@R2 '${field.fieldName}'/><#if field_has_next>,</#if>
+		</#list>
+		where cid =<@R2 'cid'/>
+	</update>
+
+	<!-- 删除记录 -->
+	<delete id="delete" parameterType="int">
+		delete from ${tableDbName} where cid = <@R2 'cid'/>
+	</delete>
+	
+</mapper>

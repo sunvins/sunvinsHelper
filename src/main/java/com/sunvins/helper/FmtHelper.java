@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -54,11 +55,12 @@ public class FmtHelper {
 	
 	public String toStr(String fmtStr,Object obj) {
 		Configuration cfg = new Configuration(Configuration.VERSION_2_3_27); 
-		cfg.setDefaultEncoding("UTF-8");
-		Template template;
+		StringTemplateLoader stringLoader = new StringTemplateLoader();  
+		cfg.setTemplateLoader(stringLoader);  
+		stringLoader.putTemplate("myTemplate",fmtStr);  
 		StringWriter writer = new StringWriter(); 
 		try {
-			template = cfg.getTemplate("");
+			Template template = cfg.getTemplate("myTemplate","UTF-8");
 			template.process(obj, writer);
 		} catch (IOException e1) {
 			e1.printStackTrace();

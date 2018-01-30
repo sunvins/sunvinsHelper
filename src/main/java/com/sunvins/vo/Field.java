@@ -9,7 +9,12 @@ public class Field {
 	private String fieldLength; //长度
 	private String fieldNullable; //是否允许空
 	private String fieldIndex; //索引
-	
+	private String fieldJdbcType; //索引
+	private String scale;
+	public String pp(String str) {
+		System.out.println("====nice:"+str);
+		return "well "+str;
+	}
 	public String getFieldDbName() {
 		return fieldDbName;
 	}
@@ -57,5 +62,17 @@ public class Field {
 	}
 	public void setFieldIndex(String fieldIndex) {
 		this.fieldIndex = fieldIndex;
+	}
+	public String getFieldJdbcType() {
+		return fieldJdbcType;
+	}
+	public void setFieldJdbcType(String fieldJdbcType) {
+		this.fieldJdbcType = fieldJdbcType;
+	}
+	public String getScale() {
+		return scale;
+	}
+	public void setScale(String scale) {
+		this.scale = scale;
 	}
 }

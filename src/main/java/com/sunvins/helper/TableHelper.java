@@ -13,7 +13,24 @@ public class TableHelper {
 
 	private PoiHelper ph;
 	public static void main(String[] args) {
-
+		String fieldLength="17.0";
+		int pos1=fieldLength.indexOf(',');
+		int pos2=fieldLength.indexOf('.');
+		String scale="";
+		if(pos1>0) {
+			scale=fieldLength.substring(pos1+1);
+			if(Integer.valueOf(scale)==0) {
+				scale="";
+			}
+			fieldLength=fieldLength.substring(0, pos1);
+		}else if(pos2>0) {
+			scale=fieldLength.substring(pos2+1);
+			if(Integer.valueOf(scale)==0) {
+				scale="";
+			}
+			fieldLength=fieldLength.substring(0, pos2);
+		}
+		System.out.println(scale+"--"+fieldLength);
 	}
 	
 	public List<Table> makeTable() {
@@ -42,7 +59,7 @@ public class TableHelper {
 		String tableDbName=null;
 		List<Table> tableList=new ArrayList<Table>();
 		Table table=null;
-		for(int i=0;i<sheet.getLastRowNum();i++) {
+		for(int i=0;i<=sheet.getLastRowNum();i++) {
 			Row row=ph.getRow(sheet, i);
 			String tableDbNamePre=getCellStr(row,1); //准备变成数据库表名的单元格值
 			if(StrHelper.isBlank(tableDbNamePre)) { //处理空行：注意（最后一个字段或者表名之前允许空行）
@@ -100,18 +117,37 @@ public class TableHelper {
 		String fieldComment=getCellStr(row,0); //字段中文名
 		String fieldDbName=getCellStr(row,1); //字段数据库名
 		String fieldDbType=getCellStr(row,2); // 字段数据库
-		String fieldLenght=getCellStr(row,3); //字段长度
+		String fieldLength=getCellStr(row,3); //字段长度
 		String fieldIndex=getCellStr(row,4); //字段索引
 		String fieldNullable=getCellStr(row,5); //是否允许空
+		int pos1=fieldLength.indexOf(',');
+		int pos2=fieldLength.indexOf('.');
+		String scale="";
+		if(pos1>0) {
+			scale=fieldLength.substring(pos1+1);
+			if(Integer.valueOf(scale)==0) {
+				scale="";
+			}
+			fieldLength=fieldLength.substring(0, pos1);
+		}else if(pos2>0) {
+			scale=fieldLength.substring(pos2+1);
+			if(Integer.valueOf(scale)==0) {
+				scale="";
+			}
+			fieldLength=fieldLength.substring(0, pos2);
+		}
+		if(!StrHelper.isBlank(scale)) fieldDbType="decimal";
 		String fieldJavaType=MapHelper.getJavaType(fieldDbType); //字段Java 类型
 		field.setFieldDbName(fieldDbName);
 		field.setFieldName(StrHelper.toCamel(fieldDbName));
 		field.setFieldComment(fieldComment);
 		field.setFieldDbType(fieldDbType);
 		field.setFieldJavaType(fieldJavaType);
-		field.setFieldLength(fieldLenght);
+		field.setFieldLength(fieldLength);
 		field.setFieldIndex(fieldIndex);
 		field.setFieldNullable(fieldNullable);
+		field.setFieldJdbcType(MapHelper.getJdbcType(fieldDbType));
+		field.setScale(scale);
 		return field;
 	}
 	
